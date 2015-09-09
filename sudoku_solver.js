@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var fs = require('fs');
 
 var numRows = 9;
@@ -137,5 +136,5 @@ module.exports = {
     checkRow: checkRow,
     checkColumn: checkColumn,
     check3x3: check3x3,
-    backtraceAlgorithm: backtraceAlgorithm,
+    backtraceAlgorithm: backtraceAlgorithm
 }
