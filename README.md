@@ -11,7 +11,7 @@ npm install mocha -g
 Testing
 -----------
 ```
-mocha susudoku_solver_spec
+mocha sudoku_solver_spec
 ```
 Example
 -----------
