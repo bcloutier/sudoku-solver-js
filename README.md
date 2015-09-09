@@ -1,14 +1,20 @@
 # sudoku-solver-js
 Simple sudoku solver using a backtracking algorithm. To run the project:
 
+Installation
+-----------
+
+```
 npm install
-
 npm install mocha -g
-
-Run the unit tests using:
-
+```
+Testing
+-----------
+```
 mocha susudoku_solver_spec
-
-Run the example using:
-
+```
+Example
+-----------
+```
 node example1
+```
