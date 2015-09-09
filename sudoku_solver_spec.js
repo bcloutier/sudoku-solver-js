@@ -10,7 +10,7 @@ var emptyPositions;
 
 describe('#readInBoard()', function() {
     it('given a filename it should read in the board', function() {
-        readInBoard = solver.readInBoard('example1.txt');
+        readInBoard = solver.readInBoard('./boards/example1.txt');
         var expectedBoard = [
             [0,9,0,0,0,0,0,0,6],
             [0,0,0,9,6,0,4,8,5],
