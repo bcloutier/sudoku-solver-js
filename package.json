@@ -1,0 +1,12 @@
+{
+  "name": "sudoku-solver",
+  "version": "1.0.0",
+  "description": "Simple sudoku solver using a backtracking algorithm",
+  "main": "sudoku_solver.js",
+  "author": "Brandon Cloutier",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.2.0",
+    "underscore": "^1.8.3"
+  }
+}
