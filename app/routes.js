@@ -1,7 +1,15 @@
 module.exports = function(app) {
 
-	// application -------------------------------------------------------------
+    /**
+    * Gets request board and responds with solution board
+    */
+    app.post('/api/solve', function(req,res) {
+       console.log(req.body.board); //returns array
+       res.send('Successful');
+    });
+    
 	app.get('*', function(req, res) {
-		res.sendfile('./public/index.html');      // load the single view file (angular will handle the page changes on the front-end)
+		res.sendfile('./public/index.html'); 
 	});
+    
 };
