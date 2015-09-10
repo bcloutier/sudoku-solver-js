@@ -5,7 +5,14 @@ Installation
 -----------
 ```
 npm install
+```
+
+Testing
+-----------
+```
 npm install mocha -g
+cd app/solver 
+mocha sudoku_solver_spec.js 
 ```
 
 Run
