@@ -3,18 +3,13 @@ Simple sudoku solver using a backtracking algorithm. To run the project:
 
 Installation
 -----------
-
 ```
 npm install
 npm install mocha -g
 ```
-Testing
+
+Run
 -----------
 ```
-mocha sudoku_solver_spec
-```
-Example
------------
-```
-node example1
+node server
 ```
