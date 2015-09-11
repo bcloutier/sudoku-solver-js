@@ -1,8 +1,9 @@
 # sudoku-solver-js
-Simple sudoku solver using a backtracking algorithm. To run the project:
+Simple sudoku solver using a backtracking algorithm.
 
 Installation
 -----------
+First make sure nodejs is installed then run in project directory
 ```
 npm install
 ```

@@ -4,19 +4,12 @@ var numRows = 9;
 var numColns = 9;
 
 /**
-* Reads in sudoku board from a file with the format:
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-* xxxxxxxxx
-*
+* Reads in sudoku board from a file with the format. The file must have 9 numbers per row and a 
+* total of 9 rows.
+* @param {string} filename - path to board text file
+* @return {Array.<Array.<number>>} A 2D array of numbers, ranging from 0-9
 */
-function readInBoard(filename) {
+function readInBoard(filename) { //TODO: make this NxN 
     var board = [];
     var data = fs.readFileSync(filename,'utf8');
     var remaining = '';
@@ -30,11 +23,13 @@ function readInBoard(filename) {
         index = remaining.indexOf('\r\n');
     }
     return board;
-    
 }
 
 /**
-* Takes in a board and returns an array containing the locations of the empty cells
+* Takes in a board and returns an array containing the locations of the empty cells.
+* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* numRows X numColns.
+* @return {Array.<Array.<number>>} An array containing the locations of the empty cells.
 */
 function emptyCells(board) {
     var emptyCells = [];
@@ -50,7 +45,12 @@ function emptyCells(board) {
 }
 
 /**
-* checks a row for the value given, returns false  if match was found. Returns true if no match was found
+* Checks a row from the board for the given value
+* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* numRows X numColns.
+* @param {number} row - the row index that is being looped over
+* @param {number} value - the value that is being compared
+* @return {boolean} If match found return false, else return true
 */
 function checkRow(board, row, value) {
     for(var j=0; j<numColns; j++) {
@@ -62,7 +62,12 @@ function checkRow(board, row, value) {
 }
 
 /**
-* checks a colum for the value given, returns false  if match was found. Returns true if no match was found
+* Checks a column from the board for the given value
+* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* numRows X numColns.
+* @param {number} col - the column index that is being looped over
+* @param {number} value - the value that is being compared
+* @return {boolean} If match found return false, else return true
 */
 function checkColumn(board, col, value) {
     for(var i=0; i<numRows; i++) {
@@ -74,7 +79,13 @@ function checkColumn(board, col, value) {
 }
 
 /**
-* Check 3x3 box for the given value, returns false if match was found. Returns true if no match was found.
+* Check 3x3 box for the given value.
+* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* numRows X numColns.
+* @param {number} row - the row index that is used to locate correct 3x3 box
+* @param {number} col - the column index that is used to locate correct 3x3 box
+* @param {number} value - the value that is being compared
+* @return {boolean} If match found return false, else return true
 */
 function check3x3(board, row, col, value) {
     var rowBoxNum = Math.floor(row/3);
@@ -90,14 +101,18 @@ function check3x3(board, row, col, value) {
 }
 
 /**
-* Uses backtrace algorithm to solve a given puzzle
+* Uses backtrace algorithm to solve a given board.
+* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* numRows X numColns.
+* @param {Array.<Array.<number>>} emptycells - 2D array containing the locations of emptycells.
+* @return {Array.<Array.<number>>|undefined} Returns solution if valid board is used, else 
+* returns undefined
 */
 function backtraceAlgorithm(board,emptycells) {
     
     for(var c=0; c<emptycells.length;) {
         var row = emptycells[c][0];
         var col = emptycells[c][1];
-        
         var value = board[row][col] + 1;
         
         var foundValue = false;
@@ -107,7 +122,8 @@ function backtraceAlgorithm(board,emptycells) {
                 c--;
                 board[row][col] = 0;
                 break;
-            } else if(checkRow(board, row, value) &&  checkColumn(board, col, value) && check3x3(board, row, col, value)) {
+            } else if(checkRow(board, row, value) &&  checkColumn(board, col, value) 
+                      && check3x3(board, row, col, value)) {
                 board[row][col] = value;
                 foundValue = true;
                 c++;
@@ -115,20 +131,28 @@ function backtraceAlgorithm(board,emptycells) {
                 value++;
             }
         }
+        
+        if(c<0) {
+            return undefined;
+        }
     }
-    
     return board;
-    
 }
 
-function solvePuzzle(filename) {
-    var board = readInBoard(filename);
+/**
+* Sets up the puzzle and solves the puzzle. A filename can be given or a board can be given.
+* @param {string} filename - path to board text file
+* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* numRows X numColns.
+*/
+function solvePuzzle(filename,board) {
+    if(filename!==null) {
+        var board = readInBoard(filename);  
+    }
     var emptycells = emptyCells(board);
     return backtraceAlgorithm(board,emptycells)
 }
-                              
-//console.log(solvePuzzle(process.argv[2]));
-
+                            
 module.exports = {
     solvePuzzle: solvePuzzle,
     readInBoard: readInBoard,
