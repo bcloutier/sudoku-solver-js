@@ -3,7 +3,7 @@ var solve = require('./solver/sudoku_solver');
 module.exports = function(app) {
 
     /**
-    * Gets request board and responds with solution 
+    * Gets board and responds with solution. Assumes that request board is an 2D array of numbers between 0-9
     */
     app.post('/api/solve', function(req,res) {
        console.log(); //returns array
@@ -13,6 +13,8 @@ module.exports = function(app) {
     
 	app.get('*', function(req, res) {
 		res.sendfile('./public/index.html'); 
+//        console.log(__dirname);
+//        res.sendFile('index.html', { root: path.join(__dirname, '../public')})
 	});
     
 };

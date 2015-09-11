@@ -46,7 +46,7 @@ function emptyCells(board) {
 
 /**
 * Checks a row from the board for the given value
-* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<Array.<Number>>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
 * @param {number} row - the row index that is being looped over
 * @param {number} value - the value that is being compared
@@ -110,6 +110,11 @@ function check3x3(board, row, col, value) {
 */
 function backtraceAlgorithm(board,emptycells) {
     
+    //duplicates in row, coln, and 3x3 squares cause an invalid board.
+    if(_checkBoardValidity(board)) {
+        return undefined;
+    }
+    
     for(var c=0; c<emptycells.length;) {
         var row = emptycells[c][0];
         var col = emptycells[c][1];
@@ -139,6 +144,7 @@ function backtraceAlgorithm(board,emptycells) {
     return board;
 }
 
+
 /**
 * Sets up the puzzle and solves the puzzle. A filename can be given or a board can be given.
 * @param {string} filename - path to board text file
@@ -152,6 +158,23 @@ function solvePuzzle(filename,board) {
     var emptycells = emptyCells(board);
     return backtraceAlgorithm(board,emptycells)
 }
+
+/**
+* Given a board checks for any duplicate entries in row, colomn, or 3x3 that would cause board to be invalid.
+*/
+function _checkBoardValidity(board) {
+    var duplicates = false;
+    board.forEach(function(row,i) {
+        row.forEach(function(value,j) {
+           if(value!==0 && (checkRow(board,i,value) || checkColumn(board,j,value) || check3x3(board,i,j,value))) {
+               console.log(value);
+               duplicates = true;   
+           }
+        });
+    });   
+    return duplicates;
+}
+
                             
 module.exports = {
     solvePuzzle: solvePuzzle,

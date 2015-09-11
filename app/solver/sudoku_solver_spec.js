@@ -5,12 +5,12 @@ var assert = Chai.assert;
 var solver = require('./sudoku_solver');
 
 
-var readInBoard;
+var validBoard;
 var emptyPositions;
 
 describe('#readInBoard()', function() {
     it('given a filename it should read in the board', function() {
-        readInBoard = solver.readInBoard('./boards/example1.txt');
+        validBoard = solver.readInBoard('./boards/example1.txt');
         var expectedBoard = [
             [0,9,0,0,0,0,0,0,6],
             [0,0,0,9,6,0,4,8,5],
@@ -22,15 +22,15 @@ describe('#readInBoard()', function() {
             [7,0,6,0,0,0,8,1,0],
             [3,0,0,0,9,0,0,0,0]
         ];
-        expect(readInBoard.length).to.equal(9);
-        expect(readInBoard[0].length).to.equal(9);
-        expect(readInBoard).to.eql(expectedBoard);
+        expect(validBoard.length).to.equal(9);
+        expect(validBoard[0].length).to.equal(9);
+        expect(validBoard).to.eql(expectedBoard);
     });
 });
 
 describe('#emptyCells()',function() {
     it('given a board, it should return an array of empty cells', function() {
-        emptyPositions = solver.emptyCells(readInBoard);
+        emptyPositions = solver.emptyCells(validBoard);
         
         var expectedPositions = [
             [0,0],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[1,0],[1,1],
@@ -47,25 +47,25 @@ describe('#emptyCells()',function() {
 
 describe('#checkRow()',function() {
    it('it should check that each value given does not equal the input', function() {
-      expect(solver.checkRow(readInBoard,0,9)).to.equal(false);
-      expect(solver.checkRow(readInBoard,8,7)).to.equal(true);
+      expect(solver.checkRow(validBoard,0,9)).to.equal(false);
+      expect(solver.checkRow(validBoard,8,7)).to.equal(true);
    });
 });
 
 describe('#checkColn()',function() {
     it('it should check that each value given does not equal the input', function() {
-        expect(solver.checkColumn(readInBoard,0,5)).to.equal(false);
-        expect(solver.checkColumn(readInBoard,8,4)).to.equal(true);
+        expect(solver.checkColumn(validBoard,0,5)).to.equal(false);
+        expect(solver.checkColumn(validBoard,8,4)).to.equal(true);
     });
 });
 
 describe('#check3x3()',function() {
     it('it should check that each value inside a 3x3 box does not equal the input', function() {
-        expect(solver.check3x3(readInBoard,0,0,8)).to.equal(true);
-        expect(solver.check3x3(readInBoard,0,0,9)).to.equal(false);
-        expect(solver.check3x3(readInBoard,6,6,2)).to.equal(false);
-        expect(solver.check3x3(readInBoard,7,7,9)).to.equal(true);
-        expect(solver.check3x3(readInBoard,7,7,8)).to.equal(false);
+        expect(solver.check3x3(validBoard,0,0,8)).to.equal(true);
+        expect(solver.check3x3(validBoard,0,0,9)).to.equal(false);
+        expect(solver.check3x3(validBoard,6,6,2)).to.equal(false);
+        expect(solver.check3x3(validBoard,7,7,9)).to.equal(true);
+        expect(solver.check3x3(validBoard,7,7,8)).to.equal(false);
     });
 });
 
@@ -82,8 +82,21 @@ describe('#backtraceAlgorithm()',function() {
                                 [ 7,4,6,3,2,5,8,1,9 ],
                                 [ 3,2,8,1,9,6,5,4,7 ]];
         
-        var soln = solver.backtraceAlgorithm(readInBoard, emptyPositions);
+        var soln = solver.backtraceAlgorithm(validBoard, emptyPositions);
         expect(soln).to.eql(expectedSolution);
+        
+        var inValidBoard = [[9,9,0,0,0,0,0,0,6],
+                            [0,0,0,9,6,0,4,8,5],
+                            [0,0,0,5,8,1,0,0,0],
+                            [0,0,4,0,0,0,0,0,0],
+                            [5,1,7,2,0,0,9,0,0],
+                            [6,0,2,0,0,0,3,7,0],
+                            [1,0,0,8,0,4,0,2,0],
+                            [7,0,6,0,0,0,8,1,0],
+                            [3,0,0,0,9,0,0,0,0]];
+        
+        var invalidSoln = solver.backtraceAlgorithm(inValidBoard, solver.emptyCells(inValidBoard));
+        expect(invalidSoln).to.eql(undefined);
     });
 });
     
