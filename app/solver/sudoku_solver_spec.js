@@ -45,6 +45,68 @@ describe('#emptyCells()',function() {
     });
 })
 
+describe('#checkBoardValidity()', function() {
+    it('valid board',function() {
+        var validBoard = [
+            [0,9,0,0,0,0,0,0,6],
+            [0,0,0,9,6,0,4,8,5],
+            [0,0,0,5,8,1,0,0,0],
+            [0,0,4,0,0,0,0,0,0],
+            [5,1,7,2,0,0,9,0,0],
+            [6,0,2,0,0,0,3,7,0],
+            [1,0,0,8,0,4,0,2,0],
+            [7,0,6,0,0,0,8,1,0],
+            [3,0,0,0,9,0,0,0,0]
+        ];
+        expect(solver.checkBoardValidity(validBoard)).to.equal(true); 
+    });
+    
+    it('invalid board - duplicate row value', function() {
+        var inValidBoard = [
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0]
+        ];
+        expect(solver.checkBoardValidity(inValidBoard)).to.equal(false);
+    });
+    
+    it('invalid board - duplicate column value',function() {
+        var inValidBoard = [
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,1],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,1],
+            [0,0,0,0,0,0,0,0,0]
+        ];
+        expect(solver.checkBoardValidity(inValidBoard)).to.equal(false); 
+    });
+    
+    it('invalid board - duplicate 3x3 value',function() {
+        var inValidBoard = [
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,0]
+        ];
+        expect(solver.checkBoardValidity(inValidBoard)).to.equal(false); 
+    });
+});
+
 describe('#checkRow()',function() {
    it('it should check that each value given does not equal the input', function() {
       expect(solver.checkRow(validBoard,0,9)).to.equal(false);

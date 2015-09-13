@@ -111,7 +111,7 @@ function check3x3(board, row, col, value) {
 function backtraceAlgorithm(board,emptycells) {
     
     //duplicates in row, coln, and 3x3 squares cause an invalid board.
-    if(_checkBoardValidity(board)) {
+    if(!checkBoardValidity(board)) {
         return undefined;
     }
     
@@ -162,17 +162,24 @@ function solvePuzzle(filename,board) {
 /**
 * Given a board checks for any duplicate entries in row, colomn, or 3x3 that would cause board to be invalid.
 */
-function _checkBoardValidity(board) {
-    var duplicates = false;
+function checkBoardValidity(board) {
+    var isValid = true;
     board.forEach(function(row,i) {
         row.forEach(function(value,j) {
-           if(value!==0 && (checkRow(board,i,value) || checkColumn(board,j,value) || check3x3(board,i,j,value))) {
-               console.log(value);
-               duplicates = true;   
-           }
+            if(value!==0) {
+                var saveVal = board[i][j]; 
+                board[i][j] = 0; //want to zero out the current position of the board, or else the 
+                                 //check methods will always return true
+                
+                if(!checkRow(board,i,value) || !checkColumn(board,j,value) || !check3x3(board,i,j,value)) {
+                    isValid = false;   
+                }
+                
+                board[i][j] = saveVal;      //set back to the correct value
+            }
         });
     });   
-    return duplicates;
+    return isValid;
 }
 
                             
@@ -183,5 +190,6 @@ module.exports = {
     checkRow: checkRow,
     checkColumn: checkColumn,
     check3x3: check3x3,
-    backtraceAlgorithm: backtraceAlgorithm
+    backtraceAlgorithm: backtraceAlgorithm,
+    checkBoardValidity: checkBoardValidity
 }
