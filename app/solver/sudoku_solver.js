@@ -1,11 +1,8 @@
 var fs = require('fs');
 
-var numRows = 9;
-var numColns = 9;
-
 /**
-* Reads in sudoku board from a file with the format. The file must have 9 numbers per row and a 
-* total of 9 rows.
+* Reads in sudoku board from a file with spaces inbetween numbers and new line for
+* each row.
 * @param {string} filename - path to board text file
 * @return {Array.<Array.<number>>} A 2D array of numbers, ranging from 0-9
 */
@@ -14,13 +11,14 @@ function readInBoard(filename) { //TODO: make this NxN
     var data = fs.readFileSync(filename,'utf8');
     var remaining = '';
     remaining+=data;
-    var index = remaining.indexOf('\r\n');
+    var index = remaining.indexOf('\n');
+    
     while (index > -1) {
-        var line = remaining.substring(0, index).split('');
-        for(var i=0; i<line.length;i++) {line[i] = +line[i]}
+        var line = remaining.substring(0, index).split(' ');
+        for(var i=0; i<line.length;i++) {line[i] = +line[i]} //convert string to numbers
         board.push(line);
-        remaining = remaining.substring(index + 2);
-        index = remaining.indexOf('\r\n');
+        remaining = remaining.substring(index + 1);
+        index = remaining.indexOf('\n');
     }
     return board;
 }
@@ -33,12 +31,12 @@ function readInBoard(filename) { //TODO: make this NxN
 */
 function emptyCells(board) {
     var emptyCells = [];
+    var numRows = board.length;
+    var numColns = board[0].length;
+    
     for(var i=0;i<numRows;i++) {
         for(var j=0;j<numColns;j++) {
-            if(board[i][j] === 0) {
-                emptyCells.push([i,j]);   
-            }
-            
+            if(board[i][j] === 0) emptyCells.push([i,j]);   
         }
     }
     return emptyCells;
@@ -53,6 +51,8 @@ function emptyCells(board) {
 * @return {boolean} If match found return false, else return true
 */
 function checkRow(board, row, value) {
+    var numColns = board[0].length;
+    
     for(var j=0; j<numColns; j++) {
         if(value === board[row][j]) {
             return false;   
@@ -70,6 +70,8 @@ function checkRow(board, row, value) {
 * @return {boolean} If match found return false, else return true
 */
 function checkColumn(board, col, value) {
+    var numRows = board.length;
+    
     for(var i=0; i<numRows; i++) {
         if(value === board[i][col]) {
             return false;   
@@ -90,8 +92,10 @@ function checkColumn(board, col, value) {
 function check3x3(board, row, col, value) {
     var rowBoxNum = Math.floor(row/3);
     var rowColNum = Math.floor(col/3);
-    for(var i=rowBoxNum*3; i<(rowBoxNum+1)*3; i++) {
-        for(var j=rowColNum*3; j<(rowColNum+1)*3; j++) {
+    var factor = board.length/3; //assumes board is divided into 3 sections
+    
+    for(var i=rowBoxNum*factor; i<(rowBoxNum+1)*factor; i++) {
+        for(var j=rowColNum*factor; j<(rowColNum+1)*factor; j++) {
             if(value === board[i][j]) {
                 return false;   
             }

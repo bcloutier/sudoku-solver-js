@@ -5,12 +5,14 @@ var assert = Chai.assert;
 var solver = require('./sudoku_solver');
 
 
-var validBoard;
+var board9x9;
+var board12x12;
+
 var emptyPositions;
 
 describe('#readInBoard()', function() {
-    it('given a filename it should read in the board', function() {
-        validBoard = solver.readInBoard('./boards/example1.txt');
+    it('read in 9x9 board', function() {
+        board9x9 = solver.readInBoard('./boards/example9x9.txt');
         var expectedBoard = [
             [0,9,0,0,0,0,0,0,6],
             [0,0,0,9,6,0,4,8,5],
@@ -20,17 +22,35 @@ describe('#readInBoard()', function() {
             [6,0,2,0,0,0,3,7,0],
             [1,0,0,8,0,4,0,2,0],
             [7,0,6,0,0,0,8,1,0],
-            [3,0,0,0,9,0,0,0,0]
-        ];
-        expect(validBoard.length).to.equal(9);
-        expect(validBoard[0].length).to.equal(9);
-        expect(validBoard).to.eql(expectedBoard);
+            [3,0,0,0,9,0,0,0,0]];
+        expect(board9x9.length).to.equal(9);
+        expect(board9x9[0].length).to.equal(9);
+        expect(board9x9).to.eql(expectedBoard);
+    });
+    
+    it('read in 12x12 board', function() {
+        board12x12 = solver.readInBoard('./boards/example12x12.txt');
+        var expectedBoard = [[0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,9,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0]];
+        expect(board12x12.length).to.equal(12);
+        expect(board12x12[0].length).to.equal(12);
+        expect(board12x12).to.eql(expectedBoard);
     });
 });
 
 describe('#emptyCells()',function() {
     it('given a board, it should return an array of empty cells', function() {
-        emptyPositions = solver.emptyCells(validBoard);
+        emptyPositions = solver.emptyCells(board9x9);
         
         var expectedPositions = [
             [0,0],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[1,0],[1,1],
@@ -109,32 +129,36 @@ describe('#checkBoardValidity()', function() {
 
 describe('#checkRow()',function() {
    it('it should check that each value given does not equal the input', function() {
-      expect(solver.checkRow(validBoard,0,9)).to.equal(false);
-      expect(solver.checkRow(validBoard,8,7)).to.equal(true);
+      expect(solver.checkRow(board9x9,0,9)).to.equal(false);
+      expect(solver.checkRow(board9x9,8,7)).to.equal(true);
    });
 });
 
 describe('#checkColn()',function() {
     it('it should check that each value given does not equal the input', function() {
-        expect(solver.checkColumn(validBoard,0,5)).to.equal(false);
-        expect(solver.checkColumn(validBoard,8,4)).to.equal(true);
+        expect(solver.checkColumn(board9x9,0,5)).to.equal(false);
+        expect(solver.checkColumn(board9x9,8,4)).to.equal(true);
     });
 });
 
 describe('#check3x3()',function() {
-    it('it should check that each value inside a 3x3 box does not equal the input', function() {
-        expect(solver.check3x3(validBoard,0,0,8)).to.equal(true);
-        expect(solver.check3x3(validBoard,0,0,9)).to.equal(false);
-        expect(solver.check3x3(validBoard,6,6,2)).to.equal(false);
-        expect(solver.check3x3(validBoard,7,7,9)).to.equal(true);
-        expect(solver.check3x3(validBoard,7,7,8)).to.equal(false);
+    it('check 3x3 square', function() {
+        expect(solver.check3x3(board9x9,0,0,8)).to.equal(true);
+        expect(solver.check3x3(board9x9,0,0,9)).to.equal(false);
+        expect(solver.check3x3(board9x9,6,6,2)).to.equal(false);
+        expect(solver.check3x3(board9x9,7,7,9)).to.equal(true);
+        expect(solver.check3x3(board9x9,7,7,8)).to.equal(false);
     });
+    
+//    it('check 4x4 square', function() {
+//        expect(solver.check3x3(board12x12,0,0,8)).to.equal(true);
+//        expect(solver.check3x3(board12x12,11,11,9)).to.equal(true);
+//    });
 });
 
 describe('#backtraceAlgorithm()',function() {
-    it('solves the puzzle, it should return the correct board', function() {
-        
-        var expectedSolution = [[ 8,9,5,7,4,2,1,3,6 ],
+    it('valid board - 9x9', function() {
+        var expectSoln = [[ 8,9,5,7,4,2,1,3,6 ],
                                 [ 2,7,1,9,6,3,4,8,5 ],
                                 [ 4,6,3,5,8,1,7,9,2 ],
                                 [ 9,3,4,6,1,7,2,5,8 ],
@@ -144,9 +168,11 @@ describe('#backtraceAlgorithm()',function() {
                                 [ 7,4,6,3,2,5,8,1,9 ],
                                 [ 3,2,8,1,9,6,5,4,7 ]];
         
-        var soln = solver.backtraceAlgorithm(validBoard, emptyPositions);
-        expect(soln).to.eql(expectedSolution);
-        
+        var soln = solver.backtraceAlgorithm(board9x9, emptyPositions);
+        expect(soln).to.eql(expectSoln);
+    });
+    
+    it('invalid board - 9x9', function() {
         var inValidBoard = [[9,9,0,0,0,0,0,0,6],
                             [0,0,0,9,6,0,4,8,5],
                             [0,0,0,5,8,1,0,0,0],
@@ -160,5 +186,23 @@ describe('#backtraceAlgorithm()',function() {
         var invalidSoln = solver.backtraceAlgorithm(inValidBoard, solver.emptyCells(inValidBoard));
         expect(invalidSoln).to.eql(undefined);
     });
+    
+//    it('valid board - 12x12',function() {
+//        var expectedSoln = [[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ],
+//                            [ 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8 ],
+//                            [ 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4 ],
+//                            [ 3, 1, 4, 2, 7, 5, 10, 6, 11, 8, 12, 9 ],
+//                            [ 11, 8, 12, 9, 3, 1, 4, 2, 7, 5, 10, 6 ],
+//                            [ 7, 5, 10, 6, 11, 8, 12, 9, 3, 1, 4, 2 ],
+//                            [ 2, 4, 1, 3, 6, 11, 5, 7, 8, 12, 9, 10 ],
+//                            [ 8, 12, 9, 10, 2, 4, 1, 3, 6, 11, 5, 7 ],
+//                            [ 6, 11, 5, 7, 8, 12, 9, 10, 2, 4, 1, 3 ],
+//                            [ 4, 3, 2, 1, 10, 7, 6, 5, 12, 9, 8, 11 ],
+//                            [ 12, 9, 8, 11, 4, 3, 2, 1, 10, 7, 6, 5 ],
+//                            [ 10, 7, 6, 5, 12, 9, 8, 11, 4, 3, 2, 1 ]]; 
+//        var emptyPositions = solver.emptyCells(board12x12);
+//        var soln = solver.backtraceAlgorithm(board12x12,emptyPositions);
+//        expect(soln).to.eql(expectedSoln);
+//    });
 });
     
