@@ -31,14 +31,12 @@ function readInBoard(filename) { //TODO: make this NxN
 */
 function emptyCells(board) {
     var emptyCells = [];
-    var numRows = board.length;
-    var numColns = board[0].length;
     
-    for(var i=0;i<numRows;i++) {
-        for(var j=0;j<numColns;j++) {
-            if(board[i][j] === 0) emptyCells.push([i,j]);   
-        }
-    }
+    board.forEach(function(row,i) {
+       row.forEach(function(value,j) {
+           if(value=== 0) emptyCells.push([i,j])
+       });
+    });
     return emptyCells;
 }
 
@@ -51,14 +49,9 @@ function emptyCells(board) {
 * @return {boolean} If match found return false, else return true
 */
 function checkRow(board, row, value) {
-    var numColns = board[0].length;
-    
-    for(var j=0; j<numColns; j++) {
-        if(value === board[row][j]) {
-            return false;   
-        }
-    }
-    return true;  
+    return board[row].every(function(col) {
+       return (value !== col) 
+    });
 }
 
 /**
@@ -81,7 +74,7 @@ function checkColumn(board, col, value) {
 }
 
 /**
-* Check 3x3 box for the given value.
+* Check region/box for value located in the given row/col pair
 * @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
 * @param {number} row - the row index that is used to locate correct 3x3 box
@@ -89,19 +82,33 @@ function checkColumn(board, col, value) {
 * @param {number} value - the value that is being compared
 * @return {boolean} If match found return false, else return true
 */
-function check3x3(board, row, col, value) {
-    var rowBoxNum = Math.floor(row/3);
-    var rowColNum = Math.floor(col/3);
-    var factor = board.length/3; //assumes board is divided into 3 sections
+function checkRegion(board, row, col, value) { 
+    var rowBoxSize = _largestPrimeFactor(board.length);
+    var colnBoxSize = board.length/rowBoxSize;
+    var rowBoxNum = Math.floor(row/rowBoxSize);
+    var rowColNum = Math.floor(col/colnBoxSize);
     
-    for(var i=rowBoxNum*factor; i<(rowBoxNum+1)*factor; i++) {
-        for(var j=rowColNum*factor; j<(rowColNum+1)*factor; j++) {
+    for(var i=rowBoxNum*rowBoxSize; i<(rowBoxNum+1)*rowBoxSize; i++) {
+        for(var j=rowColNum*colnBoxSize; j<(rowColNum+1)*colnBoxSize; j++) {
             if(value === board[i][j]) {
                 return false;   
             }
         }
     }
     return true;
+    
+    function _largestPrimeFactor(n){
+        var i=2;
+        while (i<=n){
+            if (n%i == 0){
+                n/=i;    
+            }else{
+                i++;
+            }
+        }
+        return i;
+    }
+
 }
 
 /**
@@ -127,12 +134,12 @@ function backtraceAlgorithm(board,emptycells) {
         var foundValue = false;
         
         while(!foundValue) {
-            if(value === 10) {
+            if(value > board.length) {
                 c--;
                 board[row][col] = 0;
                 break;
             } else if(checkRow(board, row, value) &&  checkColumn(board, col, value) 
-                      && check3x3(board, row, col, value)) {
+                      && checkRegion(board, row, col, value)) {
                 board[row][col] = value;
                 foundValue = true;
                 c++;
@@ -175,7 +182,7 @@ function checkBoardValidity(board) {
                 board[i][j] = 0; //want to zero out the current position of the board, or else the 
                                  //check methods will always return true
                 
-                if(!checkRow(board,i,value) || !checkColumn(board,j,value) || !check3x3(board,i,j,value)) {
+                if(!checkRow(board,i,value) || !checkColumn(board,j,value) || !checkRegion(board,i,j,value)) {
                     isValid = false;   
                 }
                 
@@ -193,7 +200,7 @@ module.exports = {
     emptyCells: emptyCells,
     checkRow: checkRow,
     checkColumn: checkColumn,
-    check3x3: check3x3,
+    checkRegion: checkRegion,
     backtraceAlgorithm: backtraceAlgorithm,
     checkBoardValidity: checkBoardValidity
 }
