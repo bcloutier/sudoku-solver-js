@@ -83,13 +83,13 @@ function checkColumn(board, col, value) {
 * @return {boolean} If match found return false, else return true
 */
 function checkRegion(board, row, col, value) { 
-    var rowBoxSize = _largestPrimeFactor(board.length);
-    var colnBoxSize = board.length/rowBoxSize;
-    var rowBoxNum = Math.floor(row/rowBoxSize);
-    var rowColNum = Math.floor(col/colnBoxSize);
+    var colBoxSize = _largestPrimeFactor(board.length);
+    var rowBoxSize = board.length/colBoxSize;
+    var rowNum = Math.floor(row/rowBoxSize);
+    var colNum = Math.floor(col/colBoxSize);
     
-    for(var i=rowBoxNum*rowBoxSize; i<(rowBoxNum+1)*rowBoxSize; i++) {
-        for(var j=rowColNum*colnBoxSize; j<(rowColNum+1)*colnBoxSize; j++) {
+    for(var i=rowNum*rowBoxSize; i<(rowNum+1)*rowBoxSize; i++) {
+        for(var j=colNum*colBoxSize; j<(colNum+1)*colBoxSize; j++) {
             if(value === board[i][j]) {
                 return false;   
             }
@@ -147,7 +147,6 @@ function backtraceAlgorithm(board,emptycells) {
                 value++;
             }
         }
-        
         if(c<0) {
             return undefined;
         }
