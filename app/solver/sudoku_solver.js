@@ -4,7 +4,7 @@ var fs = require('fs');
 * Reads in sudoku board from a file with spaces inbetween numbers and new line for
 * each row.
 * @param {string} filename - path to board text file
-* @return {Array.<Array.<number>>} A 2D array of numbers, ranging from 0-9
+* @return {Array.<number[]>} A 2D array of numbers, ranging from 0-9
 */
 function readInBoard(filename) { //TODO: make this NxN 
     var board = [];
@@ -25,9 +25,9 @@ function readInBoard(filename) { //TODO: make this NxN
 
 /**
 * Takes in a board and returns an array containing the locations of the empty cells.
-* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<number[]>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
-* @return {Array.<Array.<number>>} An array containing the locations of the empty cells.
+* @return {Array.<number[]>} An array containing the locations of the empty cells.
 */
 function emptyCells(board) {
     var emptyCells = [];
@@ -42,7 +42,7 @@ function emptyCells(board) {
 
 /**
 * Checks a row from the board for the given value
-* @param {Array.<Array.<Number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<number[]>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
 * @param {number} row - the row index that is being looped over
 * @param {number} value - the value that is being compared
@@ -56,7 +56,7 @@ function checkRow(board, row, value) {
 
 /**
 * Checks a column from the board for the given value
-* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<number[]>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
 * @param {number} col - the column index that is being looped over
 * @param {number} value - the value that is being compared
@@ -75,7 +75,7 @@ function checkColumn(board, col, value) {
 
 /**
 * Check region/box for value located in the given row/col pair
-* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<number[]>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
 * @param {number} row - the row index that is used to locate correct 3x3 box
 * @param {number} col - the column index that is used to locate correct 3x3 box
@@ -97,6 +97,7 @@ function checkRegion(board, row, col, value) {
     }
     return true;
     
+    //TODO: This can be removed outside of checkRegion for optimization
     function _largestPrimeFactor(n){
         var i=2;
         while (i<=n){
@@ -113,10 +114,10 @@ function checkRegion(board, row, col, value) {
 
 /**
 * Uses backtrace algorithm to solve a given board.
-* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<number[]>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
-* @param {Array.<Array.<number>>} emptycells - 2D array containing the locations of emptycells.
-* @return {Array.<Array.<number>>|undefined} Returns solution if valid board is used, else 
+* @param {Array.<number[]>} emptycells - 2D array containing the locations of emptycells.
+* @return {Array.<number[]>|undefined} Returns solution if valid board is used, else 
 * returns undefined
 */
 function backtraceAlgorithm(board,emptycells) {
@@ -158,7 +159,7 @@ function backtraceAlgorithm(board,emptycells) {
 /**
 * Sets up the puzzle and solves the puzzle. A filename can be given or a board can be given.
 * @param {string} filename - path to board text file
-* @param {Array.<Array.<number>>} board - 2D array of numbers, ranging from 0-9 with size 
+* @param {Array.<number[]>} board - 2D array of numbers, ranging from 0-9 with size 
 * numRows X numColns.
 */
 function solvePuzzle(filename,board) {
@@ -171,6 +172,7 @@ function solvePuzzle(filename,board) {
 
 /**
 * Given a board checks for any duplicate entries in row, colomn, or 3x3 that would cause board to be invalid.
+* @return {boolean} whether board is valid or not
 */
 function checkBoardValidity(board) {
     var isValid = true;
