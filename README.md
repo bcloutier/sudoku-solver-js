@@ -1,9 +1,9 @@
 # sudoku-solver-js
-Simple sudoku solver using a backtracking algorithm.
+Simple sudoku solver using a backtracking algorithm. Eventually it will support all regular boxsizes.
 
 Installation
 -----------
-First make sure nodejs is installed then run in project directory
+First make sure nodejs is installed, then run the following in projects directory
 ```
 npm install
 ```
