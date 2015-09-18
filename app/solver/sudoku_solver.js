@@ -6,7 +6,7 @@ var fs = require('fs');
 * @param {string} filename - path to board text file
 * @return {Array.<number[]>} A 2D array of numbers, ranging from 0-9
 */
-function readInBoard(filename) { //TODO: make this NxN 
+function readInBoard(filename) { 
     var board = [];
     var data = fs.readFileSync(filename,'utf8');
     var remaining = '';
@@ -82,9 +82,9 @@ function checkColumn(board, col, value) {
 * @param {number} value - the value that is being compared
 * @return {boolean} If match found return false, else return true
 */
-function checkRegion(board, row, col, value) { 
-    var colBoxSize = _largestPrimeFactor(board.length);
-    var rowBoxSize = board.length/colBoxSize;
+function checkRegion(board, row, col, value, boxDim) { 
+    var colBoxSize = boxDim.col;
+    var rowBoxSize = boxDim.row;
     var rowNum = Math.floor(row/rowBoxSize);
     var colNum = Math.floor(col/colBoxSize);
     
@@ -96,20 +96,6 @@ function checkRegion(board, row, col, value) {
         }
     }
     return true;
-    
-    //TODO: This can be removed outside of checkRegion for optimization
-    function _largestPrimeFactor(n){
-        var i=2;
-        while (i<=n){
-            if (n%i == 0){
-                n/=i;    
-            }else{
-                i++;
-            }
-        }
-        return i;
-    }
-
 }
 
 /**
@@ -121,9 +107,18 @@ function checkRegion(board, row, col, value) {
 * returns undefined
 */
 function backtraceAlgorithm(board,emptycells) {
+    var largestPrime = _largestPrimeFactor(board.length);
+    var otherFactor = largestPrime/board.length; 
+    var colBoxSize = (largestPrime>otherFactor ? largestPrime : otherFactor);
+    var rowBoxSize = board.length/largestPrime; 
+    
+    var boxDim = {
+        col:colBoxSize,
+        row:rowBoxSize
+    }
     
     //duplicates in row, coln, and 3x3 squares cause an invalid board.
-    if(!checkBoardValidity(board)) {
+    if(!checkBoardValidity(board, boxDim)) {
         return undefined;
     }
     
@@ -140,7 +135,7 @@ function backtraceAlgorithm(board,emptycells) {
                 board[row][col] = 0;
                 break;
             } else if(checkRow(board, row, value) &&  checkColumn(board, col, value) 
-                      && checkRegion(board, row, col, value)) {
+                      && checkRegion(board, row, col, value, boxDim)) {
                 board[row][col] = value;
                 foundValue = true;
                 c++;
@@ -153,6 +148,18 @@ function backtraceAlgorithm(board,emptycells) {
         }
     }
     return board;
+    
+    function _largestPrimeFactor(n){
+        var i=2;
+        while (i<=n){
+            if (n%i == 0){
+                n/=i;    
+            }else{
+                i++;
+            }
+        }
+        return i;
+    }
 }
 
 
@@ -174,7 +181,7 @@ function solvePuzzle(filename,board) {
 * Given a board checks for any duplicate entries in row, colomn, or 3x3 that would cause board to be invalid.
 * @return {boolean} whether board is valid or not
 */
-function checkBoardValidity(board) {
+function checkBoardValidity(board, boxDim) {
     var isValid = true;
     board.forEach(function(row,i) {
         row.forEach(function(value,j) {
@@ -183,7 +190,7 @@ function checkBoardValidity(board) {
                 board[i][j] = 0; //want to zero out the current position of the board, or else the 
                                  //check methods will always return true
                 
-                if(!checkRow(board,i,value) || !checkColumn(board,j,value) || !checkRegion(board,i,j,value)) {
+                if(!checkRow(board, i, value) || !checkColumn(board, j, value) || !checkRegion(board, i, j, value, boxDim)) {
                     isValid = false;   
                 }
                 
