@@ -82,7 +82,7 @@ function checkColumn(board, col, value) {
 * @param {number} value - the value that is being compared
 * @return {boolean} If match found return false, else return true
 */
-function checkRegion(board, row, col, value, boxDim) { 
+function checkBox(board, row, col, value, boxDim) { 
     var colBoxSize = boxDim.col;
     var rowBoxSize = boxDim.row;
     var rowNum = Math.floor(row/rowBoxSize);
@@ -107,15 +107,7 @@ function checkRegion(board, row, col, value, boxDim) {
 * returns undefined
 */
 function backtraceAlgorithm(board,emptycells) {
-    var largestPrime = _largestPrimeFactor(board.length);
-    var otherFactor = largestPrime/board.length; 
-    var colBoxSize = (largestPrime>otherFactor ? largestPrime : otherFactor);
-    var rowBoxSize = board.length/largestPrime; 
-    
-    var boxDim = {
-        col:colBoxSize,
-        row:rowBoxSize
-    }
+    var boxDim = calculateBoxDimensions(board.length);
     
     //duplicates in row, coln, and 3x3 squares cause an invalid board.
     if(!checkBoardValidity(board, boxDim)) {
@@ -126,7 +118,6 @@ function backtraceAlgorithm(board,emptycells) {
         var row = emptycells[c][0];
         var col = emptycells[c][1];
         var value = board[row][col] + 1;
-        
         var foundValue = false;
         
         while(!foundValue) {
@@ -135,7 +126,7 @@ function backtraceAlgorithm(board,emptycells) {
                 board[row][col] = 0;
                 break;
             } else if(checkRow(board, row, value) &&  checkColumn(board, col, value) 
-                      && checkRegion(board, row, col, value, boxDim)) {
+                      && checkBox(board, row, col, value, boxDim)) {
                 board[row][col] = value;
                 foundValue = true;
                 c++;
@@ -148,18 +139,6 @@ function backtraceAlgorithm(board,emptycells) {
         }
     }
     return board;
-    
-    function _largestPrimeFactor(n){
-        var i=2;
-        while (i<=n){
-            if (n%i == 0){
-                n/=i;    
-            }else{
-                i++;
-            }
-        }
-        return i;
-    }
 }
 
 
@@ -183,6 +162,7 @@ function solvePuzzle(filename,board) {
 */
 function checkBoardValidity(board, boxDim) {
     var isValid = true;
+    
     board.forEach(function(row,i) {
         row.forEach(function(value,j) {
             if(value!==0) {
@@ -190,7 +170,7 @@ function checkBoardValidity(board, boxDim) {
                 board[i][j] = 0; //want to zero out the current position of the board, or else the 
                                  //check methods will always return true
                 
-                if(!checkRow(board, i, value) || !checkColumn(board, j, value) || !checkRegion(board, i, j, value, boxDim)) {
+                if(!checkRow(board, i, value) || !checkColumn(board, j, value) || !checkBox(board, i, j, value, boxDim)) {
                     isValid = false;   
                 }
                 
@@ -201,14 +181,46 @@ function checkBoardValidity(board, boxDim) {
     return isValid;
 }
 
-                            
+/**
+* Given an NxN board, this function calculates what the box size. Example a 9x9 board has a box size of 3x3, a 6x6 board has a 
+* box size of 2x3 (rows x columns). The larger number is always the column. This only works for 'regular' sudoku boards.
+* @param  {number} n - size of the board
+* @return {Object} boxDim - the correct box size dimensions
+* @return {number} boxDim.col - the number of columns in a box
+* @return {number} boxDim.row - the number of rows in a box
+*/
+function calculateBoxDimensions(n) {
+    var largestPrime = _largestPrimeFactor(n);
+    var otherFactor = n/largestPrime; 
+    var colBoxSize = (largestPrime>otherFactor ? largestPrime : otherFactor);
+    var rowBoxSize = n/colBoxSize; 
+
+    return {
+        col:colBoxSize,
+        row:rowBoxSize
+    }
+    
+    function _largestPrimeFactor(n){
+        var i=2;
+        while (i<=n){
+            if (n%i == 0){
+                n/=i;    
+            }else{
+                i++;
+            }
+        }
+        return i;
+    }
+}
+                     
 module.exports = {
     solvePuzzle: solvePuzzle,
     readInBoard: readInBoard,
     emptyCells: emptyCells,
     checkRow: checkRow,
     checkColumn: checkColumn,
-    checkRegion: checkRegion,
+    checkBox: checkBox,
+    checkBoardValidity: checkBoardValidity,
+    calculateBoxDimensions: calculateBoxDimensions,
     backtraceAlgorithm: backtraceAlgorithm,
-    checkBoardValidity: checkBoardValidity
 }
