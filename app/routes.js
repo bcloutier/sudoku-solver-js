@@ -6,13 +6,11 @@ module.exports = function(app) {
     * Gets board and responds with solution. Assumes that request board is an 2D array of numbers between 0-9
     */
     app.post('/api/solve', function(req,res) {
-       console.log(); //returns array
-       var ans = solve.solvePuzzle(null,req.body.board)
-       res.send(ans);
+        res.send(solve.solvePuzzle(null,req.body.board));
     });
-    
-	app.get('*', function(req, res) {
+
+    app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname + 'public/index.html')); 
-	});
-    
+    });
+
 };
